@@ -4,9 +4,9 @@
 
 👻 **About ME**  
 
-- 🐶 Coding: Python, C++
+- 🔭 Coding: Python, C++
 - 📬 E-mail: 2205658756@qq.com
-- 🙅 About me: 一只菜gou，AI开发
+- 🍿 About me: 一只菜gou，AI开发
 - 🌐 Languages: English, 中文
 
 🔧 **Skills**
