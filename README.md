@@ -2,7 +2,7 @@
 
 <img align="right" src="https://github-readme-stats.vercel.app/api/top-langs/?username=KeLuoJun&layout=compact" style="width: 400px;"/>
 
-👻 **About ME**  
+👻 **ABOUT ME**  
 
 - 🔭 Coding: Python, C++
 - 📬 E-mail: 2205658756@qq.com
