@@ -5,7 +5,7 @@
 👻 **ABOUT ME**  
 
 - 🔭 Coding: Python, C++
-- 📬 E-mail: 2205658756@qq.com
+- 📬 E-mail: zzgbining@163.com
 - 🍿 About me: 一只🥬🐶，ML、DL、Agent.
 - 🌐 Languages: 中文，English
 
