@@ -12,7 +12,7 @@
 🔧 **Skills**
 
 ![](https://img.shields.io/badge/-PyTorch-EE4C2C?style=flat-square&logo=PyTorch&logoColor=fff)
-![](https://img.shields.io/badge/-AGENT-7B68EE?style=flat-square&logo=robotframework)
-![](https://img.shields.io/badge/-RAG-D96500?style=flat-square&logo=elastic)
-![](https://img.shields.io/badge/-LLM-8A2BE2?style=flat-square&logo=huggingface&logoColor=fff)
-![](https://img.shields.io/badge/-Data%20Science-9B59B6?style=flat-square&logo=jupyter&logoColor=fff)
+![](https://img.shields.io/badge/-AGENT-9B59B6?style=flat-square&logo=robotframework)
+![](https://img.shields.io/badge/-RAG-E67E22?style=flat-square&logo=elastic)
+![](https://img.shields.io/badge/-LLM-3498DB?style=flat-square&logo=huggingface&logoColor=fff)
+![](https://img.shields.io/badge/-Data%20Science-8E44AD?style=flat-square&logo=jupyter&logoColor=fff)
