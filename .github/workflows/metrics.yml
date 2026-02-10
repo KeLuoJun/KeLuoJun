@@ -1,7 +1,7 @@
 name: Language Stats Only
 on:
   schedule:
-    - cron: "0 0 * * *"  # 每天UTC 0点（北京时间早上8点）
+    - cron: "0 0 * * *"  # 每天UTC 0点
   workflow_dispatch:
 
 jobs:
@@ -10,19 +10,20 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: lowlighter/metrics@latest
+      - uses: actions/checkout@v4
+      
+      - name: Generate language stats
+        uses: lowlighter/metrics@v3.32.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.METRICS_TOKEN }}  # 关键！使用新Token
           
-          base: ""  # 必须为空！禁用所有个人信息
-          
-          # 语言统计配置
+          base: ""
           plugin_languages: yes
-          plugin_languages_ignored: html, css, tex, dockerfile, makefile, cmake, yaml, json
+          plugin_languages_ignored: ""  # 不忽略任何语言
+          plugin_languages_since: all_time  # 统计所有时间
           plugin_languages_sections: bar
+          plugin_languages_layout: compact
           plugin_languages_limit: 8
           plugin_languages_threshold: 0%
-          plugin_languages_colors: github
-          plugin_languages_layout: compact
           
-          filename: stats/languages.svg  # 修改为子目录路径
+          filename: stats/languages.svg
