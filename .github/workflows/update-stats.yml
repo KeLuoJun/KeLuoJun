@@ -1,0 +1,49 @@
+name: Update GitHub Stats
+
+on:
+  schedule:
+    # 每天凌晨 3 点自动更新
+    - cron: "0 3 * * *"
+  workflow_dispatch: # 允许手动触发
+  push:
+    branches:
+      - master
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      # 生成语言统计卡片
+      - name: Generate Top Languages Card
+        uses: lowlighter/metrics@latest
+        with:
+          filename: stats/top-langs.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: ""
+          plugin_languages: yes
+          plugin_languages_limit: 8
+          plugin_languages_layout: compact
+          plugin_languages_colors: github
+          
+      # 生成 GitHub 统计卡片
+      - name: Generate GitHub Stats Card
+        uses: lowlighter/metrics@latest
+        with:
+          filename: stats/github-stats.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: header, activity, community, repositories, metadata
+          plugin_lines: yes
+          plugin_traffic: yes
+          
+      # 提交生成的文件
+      - name: Commit and Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add stats/
+          git commit -m "Update GitHub stats" || exit 0
+          git push
