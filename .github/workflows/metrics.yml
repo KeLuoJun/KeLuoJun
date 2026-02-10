@@ -14,17 +14,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           
-          # 关键配置：仅显示语言统计
-          base: ""  # 禁用所有基础信息（移除个人信息）
+          base: ""  # 必须为空！禁用所有个人信息
           
           # 语言统计配置
           plugin_languages: yes
           plugin_languages_ignored: html, css, tex, dockerfile, makefile, cmake, yaml, json
-          plugin_languages_sections: bar  # 使用条形图样式
-          plugin_languages_limit: 8        # 显示前8种语言
-          plugin_languages_threshold: 0%   # 显示所有语言
-          plugin_languages_colors: github  # 使用GitHub主题色
-          plugin_languages_layout: compact # 紧凑布局（与图2一致）
+          plugin_languages_sections: bar
+          plugin_languages_limit: 8
+          plugin_languages_threshold: 0%
+          plugin_languages_colors: github
+          plugin_languages_layout: compact
           
-          # 输出文件名
-          filename: metrics.languages.svg
+          filename: stats/languages.svg  # 修改为子目录路径
