@@ -1,6 +1,6 @@
 # Hii，I am Gbin-in-ing💣
 
-<img align="right" src="https://github-readme-stats.vercel.app/api/top-langs/?username=KeLuoJun&layout=compact" style="width: 400px;"/>
+<img align="right" src="https://raw.githubusercontent.com/KeLuoJun/KeLuoJun/main/stats/languages.svg" style="width: 400px;"/>
 
 👻 **ABOUT ME**  
 
