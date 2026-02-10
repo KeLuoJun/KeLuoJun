@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-生成 GitHub 语言统计 SVG（环形图/甜甜圈图样式）
+生成 GitHub 语言统计 SVG（环形图/甜甜圈图样式，不显示百分比）
 """
 import os
 import sys
@@ -91,13 +91,12 @@ def get_languages(repos):
     return sorted(languages.items(), key=lambda x: x[1], reverse=True)
 
 def generate_svg(languages, top_n=8):
-    """生成环形图（甜甜圈图）SVG"""
+    """生成环形图（甜甜圈图样式），不显示百分比"""
     if not languages:
         return f'''<svg width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
   <style>
     .title {{ font: 600 20px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #0366d6; }}
     .legend-text {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #24292e; }}
-    .legend-color {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #57606a; }}
     .update-time {{ font: 400 12px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #6a737d; }}
   </style>
   <text x="250" y="30" class="title" text-anchor="middle">Top Languages by Repo</text>
@@ -147,13 +146,12 @@ def generate_svg(languages, top_n=8):
             f"Z"
         )
         
-        # 生成图例项
+        # 生成图例项（不显示百分比）
         color = LANG_COLORS.get(lang, "#cccccc")
         legend_items.append(
             f'<g transform="translate(10,{100 + i * 30})">'
             f'  <rect x="0" y="5" width="20" height="20" fill="{color}"/>'
             f'  <text x="30" y="20" class="legend-text">{lang}</text>'
-            f'  <text x="200" y="20" class="legend-color" text-anchor="end">{percent:.1f}%</text>'
             f'</g>'
         )
         
@@ -169,7 +167,6 @@ def generate_svg(languages, top_n=8):
   <style>
     .title {{ font: 600 20px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #0366d6; }}
     .legend-text {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #24292e; }}
-    .legend-color {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #57606a; }}
     .update-time {{ font: 400 12px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #6a737d; }}
   </style>
   
@@ -181,7 +178,7 @@ def generate_svg(languages, top_n=8):
     {"".join(paths)}
   </g>
   
-  <!-- 图例 -->
+  <!-- 图例（仅语言名称） -->
   <g transform="translate(0,0)">
     {"".join(legend_items)}
   </g>
