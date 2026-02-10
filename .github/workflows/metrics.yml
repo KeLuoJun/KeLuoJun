@@ -1,7 +1,8 @@
+# .github/workflows/metrics.yml
 name: Language Stats Only
 on:
   schedule:
-    - cron: "0 0 * * *"  # 每天UTC 0点
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 jobs:
@@ -13,17 +14,14 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Generate language stats
-        uses: lowlighter/metrics@3.32.0 
+        uses: lowlighter/metrics@v3  
         with:
           token: ${{ secrets.METRICS_TOKEN }}
           
           base: ""
           plugin_languages: yes
           plugin_languages_ignored: ""
-          plugin_languages_since: all_time
           plugin_languages_sections: bar
           plugin_languages_layout: compact
-          plugin_languages_limit: 8
-          plugin_languages_threshold: 0%
           
           filename: stats/languages.svg
