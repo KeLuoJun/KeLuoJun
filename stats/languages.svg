@@ -1,26 +1,34 @@
-<svg width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+<svg width="600" height="350" viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
   <style>
-    .title { font: 600 20px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #0366d6; }
-    .legend-text { font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #24292e; }
-    .legend-color { font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #57606a; }
-    .update-time { font: 400 12px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #6a737d; }
+    .title { font: 600 22px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #0969da; }
+    .legend-text { font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .update-time { font: 400 11px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #656d76; }
   </style>
   
-  <!-- 标题 -->
-  <text x="250" y="30" class="title" text-anchor="middle">Top Languages by Repo</text>
+  <!-- 背景 -->
+  <rect width="600" height="350" fill="#ffffff" rx="6"/>
   
-  <!-- 环形图 -->
-  <g transform="translate(0,0)">
-    <path d="M 320.0 50.0 L 320.0 90.0 A 40 40 0 1 1 294.0837730266828 160.46882307322534 L 268.1675460533657 190.93764614645067 A 80 80 0 1 0 320.0 50.0 Z" fill="#da5b0b" opacity="0.9" stroke="#ffffff" stroke-width="1"/><path d="M 268.1675460533657 190.93764614645067 L 294.0837730266828 160.46882307322534 A 40 40 0 0 1 295.4942628451617 98.38562278807349 L 270.9885256903234 66.77124557614698 A 80 80 0 0 0 268.1675460533657 190.93764614645067 Z" fill="#3572A5" opacity="0.9" stroke="#ffffff" stroke-width="1"/><path d="M 270.9885256903234 66.77124557614698 L 295.4942628451617 98.38562278807349 A 40 40 0 0 1 310.5297616167876 91.1372339511824 L 301.0595232335752 52.27446790236479 A 80 80 0 0 0 270.9885256903234 66.77124557614698 Z" fill="#f34b7d" opacity="0.9" stroke="#ffffff" stroke-width="1"/><path d="M 301.0595232335752 52.27446790236479 L 310.5297616167876 91.1372339511824 A 40 40 0 0 1 314.44780151496815 90.38721049985485 L 308.8956030299363 50.77442099970969 A 80 80 0 0 0 301.0595232335752 52.27446790236479 Z" fill="#f1e05a" opacity="0.9" stroke="#ffffff" stroke-width="1"/><path d="M 308.8956030299363 50.77442099970969 L 314.44780151496815 90.38721049985485 A 40 40 0 0 1 316.43456572652696 90.1592209107108 L 312.8691314530539 50.3184418214216 A 80 80 0 0 0 308.8956030299363 50.77442099970969 Z" fill="#41b883" opacity="0.9" stroke="#ffffff" stroke-width="1"/><path d="M 312.8691314530539 50.3184418214216 L 316.43456572652696 90.1592209107108 A 40 40 0 0 1 317.79039223018356 90.06107620999826 L 315.58078446036706 50.122152419996524 A 80 80 0 0 0 312.8691314530539 50.3184418214216 Z" fill="#007acc" opacity="0.9" stroke="#ffffff" stroke-width="1"/><path d="M 315.58078446036706 50.122152419996524 L 317.79039223018356 90.06107620999826 A 40 40 0 0 1 318.72798546062563 90.02023037820729 L 317.45597092125126 50.04046075641456 A 80 80 0 0 0 315.58078446036706 50.122152419996524 Z" fill="#555555" opacity="0.9" stroke="#ffffff" stroke-width="1"/><path d="M 317.45597092125126 50.04046075641456 L 318.72798546062563 90.02023037820729 A 40 40 0 0 1 319.6189641025152 90.00181489561272 L 319.23792820503036 50.00362979122545 A 80 80 0 0 0 317.45597092125126 50.04046075641456 Z" fill="#cccccc" opacity="0.9" stroke="#ffffff" stroke-width="1"/>
+  <!-- 标题 -->
+  <text x="300" y="45" class="title" text-anchor="middle">Top Languages by Repo</text>
+  
+  <!-- 图例 - 左侧 -->
+  <g>
+    <g transform="translate(70,110)">  <rect x="0" y="0" width="15" height="15" fill="#da5b0b" rx="2"/>  <text x="25" y="12" class="legend-text">Jupyter Notebook</text></g><g transform="translate(70,138)">  <rect x="0" y="0" width="15" height="15" fill="#3572A5" rx="2"/>  <text x="25" y="12" class="legend-text">Python</text></g><g transform="translate(70,166)">  <rect x="0" y="0" width="15" height="15" fill="#f34b7d" rx="2"/>  <text x="25" y="12" class="legend-text">C++</text></g><g transform="translate(70,194)">  <rect x="0" y="0" width="15" height="15" fill="#f1e05a" rx="2"/>  <text x="25" y="12" class="legend-text">JavaScript</text></g><g transform="translate(70,222)">  <rect x="0" y="0" width="15" height="15" fill="#e34c26" rx="2"/>  <text x="25" y="12" class="legend-text">HTML</text></g><g transform="translate(70,250)">  <rect x="0" y="0" width="15" height="15" fill="#41b883" rx="2"/>  <text x="25" y="12" class="legend-text">Vue</text></g><g transform="translate(70,278)">  <rect x="0" y="0" width="15" height="15" fill="#007acc" rx="2"/>  <text x="25" y="12" class="legend-text">TypeScript</text></g><g transform="translate(70,306)">  <rect x="0" y="0" width="15" height="15" fill="#555555" rx="2"/>  <text x="25" y="12" class="legend-text">C</text></g>
   </g>
   
-  <!-- 图例 -->
-  <g transform="translate(0,0)">
-    <g transform="translate(10,100)">  <rect x="0" y="5" width="20" height="20" fill="#da5b0b"/>  <text x="30" y="20" class="legend-text">Jupyter Notebook</text>  <text x="200" y="20" class="legend-color" text-anchor="end">61.2%</text></g><g transform="translate(10,130)">  <rect x="0" y="5" width="20" height="20" fill="#3572A5"/>  <text x="30" y="20" class="legend-text">Python</text>  <text x="200" y="20" class="legend-color" text-anchor="end">28.3%</text></g><g transform="translate(10,160)">  <rect x="0" y="5" width="20" height="20" fill="#f34b7d"/>  <text x="30" y="20" class="legend-text">C++</text>  <text x="200" y="20" class="legend-color" text-anchor="end">6.7%</text></g><g transform="translate(10,190)">  <rect x="0" y="5" width="20" height="20" fill="#f1e05a"/>  <text x="30" y="20" class="legend-text">JavaScript</text>  <text x="200" y="20" class="legend-color" text-anchor="end">1.6%</text></g><g transform="translate(10,220)">  <rect x="0" y="5" width="20" height="20" fill="#41b883"/>  <text x="30" y="20" class="legend-text">Vue</text>  <text x="200" y="20" class="legend-color" text-anchor="end">0.8%</text></g><g transform="translate(10,250)">  <rect x="0" y="5" width="20" height="20" fill="#007acc"/>  <text x="30" y="20" class="legend-text">TypeScript</text>  <text x="200" y="20" class="legend-color" text-anchor="end">0.5%</text></g><g transform="translate(10,280)">  <rect x="0" y="5" width="20" height="20" fill="#555555"/>  <text x="30" y="20" class="legend-text">C</text>  <text x="200" y="20" class="legend-color" text-anchor="end">0.4%</text></g><g transform="translate(10,310)">  <rect x="0" y="5" width="20" height="20" fill="#cccccc"/>  <text x="30" y="20" class="legend-text">GDScript</text>  <text x="200" y="20" class="legend-color" text-anchor="end">0.4%</text></g>
+  <!-- 环形图 - 右侧 -->
+  <g filter="url(#shadow)">
+    <path d="M 450.0 80.0 A 100 100 0 1 0 388.86092291329123 259.13288351239 L 419.4304614566456 219.566441756195 A 50 50 0 1 1 450.0 130.0 Z" fill="#da5b0b" opacity="0.95" stroke="#ffffff" stroke-width="2"/><path d="M 388.86092291329123 259.13288351239 A 100 100 0 0 0 383.4517274453983 105.35867485100192 L 416.72586372269916 142.67933742550096 A 50 50 0 0 1 419.4304614566456 219.566441756195 Z" fill="#3572A5" opacity="0.95" stroke="#ffffff" stroke-width="2"/><path d="M 383.4517274453983 105.35867485100192 A 100 100 0 0 0 419.2177784575678 84.85561058626408 L 434.6088892287839 132.42780529313205 A 50 50 0 0 1 416.72586372269916 142.67933742550096 Z" fill="#f34b7d" opacity="0.95" stroke="#ffffff" stroke-width="2"/><path d="M 419.2177784575678 84.85561058626408 A 100 100 0 0 0 428.7285859420583 82.28855264619399 L 439.36429297102916 131.144276323097 A 50 50 0 0 1 434.6088892287839 132.42780529313205 Z" fill="#f1e05a" opacity="0.95" stroke="#ffffff" stroke-width="2"/><path d="M 428.7285859420583 82.28855264619399 A 100 100 0 0 0 436.28808696164594 80.94454360900346 L 443.144043480823 130.47227180450173 A 50 50 0 0 1 439.36429297102916 131.144276323097 Z" fill="#e34c26" opacity="0.95" stroke="#ffffff" stroke-width="2"/><path d="M 436.28808696164594 80.94454360900346 A 100 100 0 0 0 441.1950808553783 80.38838722891454 L 445.5975404276891 130.19419361445728 A 50 50 0 0 1 443.144043480823 130.47227180450173 Z" fill="#41b883" opacity="0.95" stroke="#ffffff" stroke-width="2"/><path d="M 441.1950808553783 80.38838722891454 A 100 100 0 0 0 444.54343313570826 80.14898158728919 L 447.2717165678541 130.0744907936446 A 50 50 0 0 1 445.5975404276891 130.19419361445728 Z" fill="#007acc" opacity="0.95" stroke="#ffffff" stroke-width="2"/><path d="M 444.54343313570826 80.14898158728919 A 100 100 0 0 0 446.8588203548425 80.04934722355813 L 448.4294101774213 130.02467361177906 A 50 50 0 0 1 447.2717165678541 130.0744907936446 Z" fill="#555555" opacity="0.95" stroke="#ffffff" stroke-width="2"/>
   </g>
   
   <!-- 更新时间 -->
-  <text x="250" y="240" class="update-time" text-anchor="middle">
+  <text x="300" y="330" class="update-time" text-anchor="middle">
     Updated: 2026-02-10
   </text>
 </svg>
