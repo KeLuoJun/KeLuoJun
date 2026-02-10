@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-生成 GitHub 语言统计 SVG（环形图/甜甜圈图样式，不显示百分比）
+生成 GitHub 语言统计 SVG（按仓库数量统计，避免 Jupyter Notebook 字节膨胀）
 """
 import os
 import sys
@@ -43,10 +43,6 @@ LANG_COLORS = {
     "Jupyter Notebook": "#da5b0b",
     "Vue": "#41b883",
     "Svelte": "#ff3e00",
-    "React": "#61dafb",
-    "Angular": "#dd0031",
-    "Docker": "#0db7ed",
-    "Kubernetes": "#326ce5",
 }
 
 def get_repos():
@@ -73,7 +69,7 @@ def get_repos():
     return repos
 
 def get_languages(repos):
-    """统计所有仓库的语言使用量"""
+    """按仓库数量统计语言（避免 Jupyter Notebook 字节膨胀）"""
     headers = {"Authorization": f"token {TOKEN}"} if TOKEN else {}
     languages = {}
     
@@ -83,11 +79,12 @@ def get_languages(repos):
         
         if response.status_code == 200:
             lang_data = response.json()
-            for lang, bytes_count in lang_data.items():
+            # 按仓库计数：每个仓库中出现的语言 +1
+            for lang in lang_data.keys():
                 if lang not in IGNORED_LANGS:
-                    languages[lang] = languages.get(lang, 0) + bytes_count
+                    languages[lang] = languages.get(lang, 0) + 1
     
-    # 按字节数排序
+    # 按仓库数量排序
     return sorted(languages.items(), key=lambda x: x[1], reverse=True)
 
 def generate_svg(languages, top_n=8):
@@ -99,28 +96,27 @@ def generate_svg(languages, top_n=8):
     .legend-text {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #24292e; }}
     .update-time {{ font: 400 12px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #6a737d; }}
   </style>
-  <text x="250" y="30" class="title" text-anchor="middle">Top Languages by Repo</text>
+  <text x="250" y="30" class="title" text-anchor="middle">Top Languages</text>
   <text x="250" y="150" class="legend-text" text-anchor="middle">No languages detected</text>
-  <text x="250" y="180" class="legend-text" text-anchor="middle">Check: repo visibility / token permissions</text>
   <text x="250" y="210" class="update-time" text-anchor="middle">Updated: {datetime.now().strftime('%Y-%m-%d')}</text>
 </svg>'''
 
-    # 计算总字节数
-    total = sum(bytes_count for _, bytes_count in languages)
+    # 计算总仓库数
+    total = sum(count for _, count in languages)
     
     # 准备环形图参数
-    cx, cy = 320, 130  # 圆心坐标
-    radius = 80  # 外半径
-    inner_radius = 40  # 内半径
-    start_angle = -90  # 起始角度（-90度表示从顶部开始）
+    cx, cy = 320, 130
+    radius = 80
+    inner_radius = 40
+    start_angle = -90
     
     # 生成环形图
     paths = []
     legend_items = []
     angle = start_angle
     
-    for i, (lang, bytes_count) in enumerate(languages[:top_n]):
-        percent = (bytes_count / total) * 100
+    for i, (lang, count) in enumerate(languages[:top_n]):
+        percent = (count / total) * 100
         end_angle = angle + (percent / 100) * 360
         
         # 计算扇形路径
@@ -128,14 +124,11 @@ def generate_svg(languages, top_n=8):
         y1 = cy + radius * math.sin(math.radians(angle))
         x2 = cx + radius * math.cos(math.radians(end_angle))
         y2 = cy + radius * math.sin(math.radians(end_angle))
-        
-        # 计算内环坐标
         ix1 = cx + inner_radius * math.cos(math.radians(angle))
         iy1 = cy + inner_radius * math.sin(math.radians(angle))
         ix2 = cx + inner_radius * math.cos(math.radians(end_angle))
         iy2 = cy + inner_radius * math.sin(math.radians(end_angle))
         
-        # 生成路径数据
         large_arc = 1 if (end_angle - angle) > 180 else 0
         path_data = (
             f"M {x1} {y1} "
@@ -146,7 +139,7 @@ def generate_svg(languages, top_n=8):
             f"Z"
         )
         
-        # 生成图例项（不显示百分比）
+        # 生成图例项（仅语言名称）
         color = LANG_COLORS.get(lang, "#cccccc")
         legend_items.append(
             f'<g transform="translate(10,{100 + i * 30})">'
@@ -155,14 +148,13 @@ def generate_svg(languages, top_n=8):
             f'</g>'
         )
         
-        # 添加到路径列表
         paths.append(
             f'<path d="{path_data}" fill="{color}" opacity="0.9" stroke="#ffffff" stroke-width="1"/>'
         )
         
         angle = end_angle
     
-    # 生成SVG
+    # 生成SVG（标题简化为 "Top Languages"）
     svg = f'''<svg width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
   <style>
     .title {{ font: 600 20px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #0366d6; }}
@@ -171,14 +163,14 @@ def generate_svg(languages, top_n=8):
   </style>
   
   <!-- 标题 -->
-  <text x="250" y="30" class="title" text-anchor="middle">Top Languages by Repo</text>
+  <text x="250" y="30" class="title" text-anchor="middle">Top Languages</text>
   
   <!-- 环形图 -->
   <g transform="translate(0,0)">
     {"".join(paths)}
   </g>
   
-  <!-- 图例（仅语言名称） -->
+  <!-- 图例 -->
   <g transform="translate(0,0)">
     {"".join(legend_items)}
   </g>
@@ -203,21 +195,17 @@ def main():
     repos = get_repos()
     print(f"✅ 找到 {len(repos)} 个非 Fork 仓库")
     
-    print("📊 正在统计语言使用量...")
+    print("📊 正在统计语言使用量（按仓库数量）...")
     languages = get_languages(repos)
     
     if not languages:
         print("⚠️  警告: 未检测到任何编程语言", file=sys.stderr)
-        print("   可能原因:")
-        print("   1. 仓库都是私有的（需要正确配置 TOKEN）")
-        print("   2. 仓库只有被忽略的语言（HTML/CSS 等）")
-        print("   3. 仓库为空或只有文档")
     else:
-        total_bytes = sum(b for _, b in languages)
-        print(f"✅ 检测到 {len(languages)} 种语言:")
-        for lang, bytes_count in languages[:5]:
-            percent = (bytes_count / total_bytes) * 100
-            print(f"   - {lang}: {percent:.1f}% ({bytes_count:,} bytes)")
+        total_repos = sum(c for _, c in languages)
+        print(f"✅ 检测到 {len(languages)} 种语言（基于 {total_repos} 个仓库）:")
+        for lang, count in languages[:5]:
+            percent = (count / total_repos) * 100
+            print(f"   - {lang}: {count} 仓库 ({percent:.1f}%)")
     
     svg = generate_svg(languages)
     save_svg(svg)
