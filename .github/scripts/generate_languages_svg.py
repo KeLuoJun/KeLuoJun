@@ -1,17 +1,53 @@
 #!/usr/bin/env python3
 """
-生成 GitHub 语言统计 SVG（条形图样式）
+生成 GitHub 语言统计 SVG（环形图/甜甜圈图样式）
 """
 import os
 import sys
 import requests
 from datetime import datetime
+import math
 
 # 配置
 USERNAME = "KeLuoJun"
 TOKEN = os.environ.get("GITHUB_TOKEN", "")
 OUTPUT_FILE = "stats/languages.svg"
 IGNORED_LANGS = {"HTML", "CSS", "TeX", "Dockerfile", "Makefile", "YAML", "JSON", "Shell", "PowerShell"}
+
+# GitHub 官方语言颜色映射
+LANG_COLORS = {
+    "Python": "#3572A5",
+    "JavaScript": "#f1e05a",
+    "TypeScript": "#007acc",
+    "Java": "#b07219",
+    "C++": "#f34b7d",
+    "C": "#555555",
+    "C#": "#178600",
+    "Go": "#00ADD8",
+    "Rust": "#dea584",
+    "Ruby": "#701516",
+    "PHP": "#4F5D95",
+    "Swift": "#ffac45",
+    "Kotlin": "#0095D5",
+    "Scala": "#c22d40",
+    "R": "#198ce7",
+    "Julia": "#9558b2",
+    "Dart": "#00b4ab",
+    "Lua": "#000080",
+    "Haskell": "#5e5086",
+    "Elixir": "#6e4a7e",
+    "Clojure": "#db5855",
+    "Objective-C": "#438eff",
+    "Perl": "#0298c3",
+    "VimL": "#199f4b",
+    "Jupyter Notebook": "#da5b0b",
+    "Vue": "#41b883",
+    "Svelte": "#ff3e00",
+    "React": "#61dafb",
+    "Angular": "#dd0031",
+    "Docker": "#0db7ed",
+    "Kubernetes": "#326ce5",
+}
 
 def get_repos():
     """获取用户所有仓库"""
@@ -55,78 +91,105 @@ def get_languages(repos):
     return sorted(languages.items(), key=lambda x: x[1], reverse=True)
 
 def generate_svg(languages, top_n=8):
-    """生成 SVG 条形图"""
+    """生成环形图（甜甜圈图）SVG"""
     if not languages:
-        return f'''<svg width="400" height="100" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+        return f'''<svg width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .title {{ font: 600 18px sans-serif; fill: #0366d6; }}
-    .error {{ font: 400 14px sans-serif; fill: #cf222e; }}
+    .title {{ font: 600 20px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #0366d6; }}
+    .legend-text {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #24292e; }}
+    .legend-color {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #57606a; }}
+    .update-time {{ font: 400 12px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #6a737d; }}
   </style>
-  <text x="20" y="30" class="title">Most Used Languages</text>
-  <text x="20" y="60" class="error">No languages found</text>
-  <text x="20" y="80" class="error">Check repository visibility</text>
+  <text x="250" y="30" class="title" text-anchor="middle">Top Languages by Repo</text>
+  <text x="250" y="150" class="legend-text" text-anchor="middle">No languages detected</text>
+  <text x="250" y="180" class="legend-text" text-anchor="middle">Check: repo visibility / token permissions</text>
+  <text x="250" y="210" class="update-time" text-anchor="middle">Updated: {datetime.now().strftime('%Y-%m-%d')}</text>
 </svg>'''
-    
+
+    # 计算总字节数
     total = sum(bytes_count for _, bytes_count in languages)
-    items = []
-    y_offset = 50
-    bar_height = 16
-    bar_width = 320
-    item_height = 28
     
-    # GitHub 官方语言颜色
-    lang_colors = {
-        "Python": "#3572A5",
-        "JavaScript": "#f1e05a",
-        "TypeScript": "#007acc",
-        "Java": "#b07219",
-        "C++": "#f34b7d",
-        "C": "#555555",
-        "C#": "#178600",
-        "Go": "#00ADD8",
-        "Rust": "#dea584",
-        "Ruby": "#701516",
-        "PHP": "#4F5D95",
-        "Swift": "#ffac45",
-        "Kotlin": "#0095D5",
-        "Scala": "#c22d40",
-        "R": "#198ce7",
-        "Julia": "#9558b2",
-        "Dart": "#00b4ab",
-        "Lua": "#000080",
-        "Haskell": "#5e5086",
-        "Elixir": "#6e4a7e",
-        "Clojure": "#db5855",
-        "Objective-C": "#438eff",
-        "Perl": "#0298c3",
-        "VimL": "#199f4b",
-        "Jupyter Notebook": "#da5b0b",
-    }
+    # 准备环形图参数
+    cx, cy = 320, 130  # 圆心坐标
+    radius = 80  # 外半径
+    inner_radius = 40  # 内半径
+    start_angle = -90  # 起始角度（-90度表示从顶部开始）
     
-    # 生成条目
+    # 生成环形图
+    paths = []
+    legend_items = []
+    angle = start_angle
+    
     for i, (lang, bytes_count) in enumerate(languages[:top_n]):
         percent = (bytes_count / total) * 100
-        color = lang_colors.get(lang, "#cccccc")
-        bar_len = (percent / 100) * bar_width
+        end_angle = angle + (percent / 100) * 360
         
-        items.append(f'''
-  <g transform="translate(0,{y_offset + i * item_height})">
-    <text x="0" y="14" class="lang-name">{lang}</text>
-    <rect x="0" y="18" width="{bar_len}" height="{bar_height}" rx="3" fill="{color}"/>
-    <text x="{bar_width + 10}" y="30" class="percent">{percent:.1f}%</text>
-  </g>''')
+        # 计算扇形路径
+        x1 = cx + radius * math.cos(math.radians(angle))
+        y1 = cy + radius * math.sin(math.radians(angle))
+        x2 = cx + radius * math.cos(math.radians(end_angle))
+        y2 = cy + radius * math.sin(math.radians(end_angle))
+        
+        # 计算内环坐标
+        ix1 = cx + inner_radius * math.cos(math.radians(angle))
+        iy1 = cy + inner_radius * math.sin(math.radians(angle))
+        ix2 = cx + inner_radius * math.cos(math.radians(end_angle))
+        iy2 = cy + inner_radius * math.sin(math.radians(end_angle))
+        
+        # 生成路径数据
+        large_arc = 1 if (end_angle - angle) > 180 else 0
+        path_data = (
+            f"M {x1} {y1} "
+            f"L {ix1} {iy1} "
+            f"A {inner_radius} {inner_radius} 0 {large_arc} 1 {ix2} {iy2} "
+            f"L {x2} {y2} "
+            f"A {radius} {radius} 0 {large_arc} 0 {x1} {y1} "
+            f"Z"
+        )
+        
+        # 生成图例项
+        color = LANG_COLORS.get(lang, "#cccccc")
+        legend_items.append(
+            f'<g transform="translate(10,{100 + i * 30})">'
+            f'  <rect x="0" y="5" width="20" height="20" fill="{color}"/>'
+            f'  <text x="30" y="20" class="legend-text">{lang}</text>'
+            f'  <text x="200" y="20" class="legend-color" text-anchor="end">{percent:.1f}%</text>'
+            f'</g>'
+        )
+        
+        # 添加到路径列表
+        paths.append(
+            f'<path d="{path_data}" fill="{color}" opacity="0.9" stroke="#ffffff" stroke-width="1"/>'
+        )
+        
+        angle = end_angle
     
-    svg = f'''<svg width="400" height="{80 + len(languages[:top_n]) * item_height}" viewBox="0 0 400 {80 + len(languages[:top_n]) * item_height}" xmlns="http://www.w3.org/2000/svg">
+    # 生成SVG
+    svg = f'''<svg width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .header {{ font: 600 18px sans-serif; fill: #0366d6; }}
-    .lang-name {{ font: 400 14px sans-serif; fill: #24292e; }}
-    .percent {{ font: 400 14px sans-serif; fill: #57606a; text-anchor: end; }}
+    .title {{ font: 600 20px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #0366d6; }}
+    .legend-text {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #24292e; }}
+    .legend-color {{ font: 400 14px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #57606a; }}
+    .update-time {{ font: 400 12px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #6a737d; }}
   </style>
-  <text x="0" y="28" class="header">Most Used Languages</text>
-  <g transform="translate(0,40)">
-    {''.join(items)}
+  
+  <!-- 标题 -->
+  <text x="250" y="30" class="title" text-anchor="middle">Top Languages by Repo</text>
+  
+  <!-- 环形图 -->
+  <g transform="translate(0,0)">
+    {"".join(paths)}
   </g>
-  <text x="0" y="{80 + len(languages[:top_n]) * item_height - 5}" class="update-time" font-size="12" fill="#6a737d">Updated: {datetime.now().strftime('%Y-%m-%d')}</text>
+  
+  <!-- 图例 -->
+  <g transform="translate(0,0)">
+    {"".join(legend_items)}
+  </g>
+  
+  <!-- 更新时间 -->
+  <text x="250" y="240" class="update-time" text-anchor="middle">
+    Updated: {datetime.now().strftime('%Y-%m-%d')}
+  </text>
 </svg>'''
     
     return svg
@@ -153,9 +216,10 @@ def main():
         print("   2. 仓库只有被忽略的语言（HTML/CSS 等）")
         print("   3. 仓库为空或只有文档")
     else:
+        total_bytes = sum(b for _, b in languages)
         print(f"✅ 检测到 {len(languages)} 种语言:")
         for lang, bytes_count in languages[:5]:
-            percent = (bytes_count / sum(b for _, b in languages)) * 100
+            percent = (bytes_count / total_bytes) * 100
             print(f"   - {lang}: {percent:.1f}% ({bytes_count:,} bytes)")
     
     svg = generate_svg(languages)
