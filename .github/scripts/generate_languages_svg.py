@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-生成 GitHub 语言统计 SVG（按仓库数量统计，避免 Jupyter Notebook 字节膨胀）
+生成 GitHub 语言统计 SVG（专业环形图，解决小扇形显示问题）
 """
 import os
 import sys
@@ -88,7 +88,7 @@ def get_languages(repos):
     return sorted(languages.items(), key=lambda x: x[1], reverse=True)
 
 def generate_svg(languages, top_n=8):
-    """生成环形图（甜甜圈图样式），不显示百分比"""
+    """生成专业环形图（解决小扇形显示问题）"""
     if not languages:
         return f'''<svg width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -104,6 +104,37 @@ def generate_svg(languages, top_n=8):
     # 计算总仓库数
     total = sum(count for _, count in languages)
     
+    # ============= 关键修复：智能角度调整算法 =============
+    # 1. 计算原始角度
+    angles = []
+    for lang, count in languages[:top_n]:
+        percent = (count / total) * 100
+        angle = percent * 3.6  # 360/100 = 3.6
+        angles.append(angle)
+    
+    # 2. 处理小扇形（确保最小可见角度）
+    min_angle = 1.5  # 最小可见角度（度）
+    small_indices = []
+    for i, angle in enumerate(angles):
+        if angle < min_angle:
+            small_indices.append(i)
+            angles[i] = min_angle
+    
+    # 3. 调整总角度（确保总和为360）
+    total_angle = sum(angles)
+    excess = total_angle - 360.0
+    
+    # 4. 按比例调整其他扇形
+    if excess > 0 and len(angles) > len(small_indices):
+        # 找出非小扇形索引
+        other_indices = [i for i in range(len(angles)) if i not in small_indices]
+        other_total = sum(angles[i] for i in other_indices)
+        
+        # 按比例减少其他扇形
+        for i in other_indices:
+            angles[i] = angles[i] * (other_total - excess) / other_total
+    # ============= 修复结束 =============
+    
     # 准备环形图参数
     cx, cy = 320, 130
     radius = 80
@@ -116,8 +147,8 @@ def generate_svg(languages, top_n=8):
     angle = start_angle
     
     for i, (lang, count) in enumerate(languages[:top_n]):
-        percent = (count / total) * 100
-        end_angle = angle + (percent / 100) * 360
+        # 使用调整后的角度
+        end_angle = angle + angles[i]
         
         # 计算扇形路径
         x1 = cx + radius * math.cos(math.radians(angle))
@@ -154,7 +185,7 @@ def generate_svg(languages, top_n=8):
         
         angle = end_angle
     
-    # 生成SVG（标题简化为 "Top Languages"）
+    # 生成SVG
     svg = f'''<svg width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
   <style>
     .title {{ font: 600 20px 'Segoe UI', Helvetica, Arial, sans-serif; fill: #0366d6; }}
