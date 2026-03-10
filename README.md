@@ -7,7 +7,7 @@
 - 🔭 Coding: Python, C++
 - 📬 E-mail: zzgbining@163.com
 - 🍿 About me: 一只🥬🐶，ML、DL、Agent.
-- 🌐 Languages: 中文，English
+- 📖 Knowledge Base: [Deep into AI](https://ima.qq.com/wiki/?shareId=f21f7938e55146133679f88fbbd9afcc6f16f18f7d1d8431b9152b7b5f2ef131)
 
 🔧 **Skills**
 
